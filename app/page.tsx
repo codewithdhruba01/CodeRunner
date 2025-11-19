@@ -182,7 +182,7 @@ export default function Home() {
 
       <main className="flex flex-1 flex-col overflow-hidden">
         <div className="border-b bg-muted/30 px-4 py-3">
-          <div className="container flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex flex-wrap items-center gap-3">
               <Select
                 value={language}
@@ -247,20 +247,22 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="container flex flex-1 flex-col gap-4 overflow-hidden py-4 lg:flex-row">
-          <div className="flex flex-1 flex-col gap-2">
+        <div className="flex flex-1 flex-col gap-4 overflow-hidden py-4 px-6 lg:flex-row justify-center">
+          {/* LEFT SIDE EDITOR */}
+          <div className="flex flex-col gap-2 w-full lg:w-[45%]">
             <h2 className="text-sm font-semibold">Code Editor</h2>
             <CodeEditor
               value={code}
               onChange={setCode}
               language={language}
-              className="flex-1"
+              className="flex-1 min-h-[350px]"
             />
           </div>
 
-          <div className="flex flex-1 flex-col gap-2">
+          {/* RIGHT SIDE OUTPUT */}
+          <div className="flex flex-col gap-2 w-full lg:w-[45%]">
             <h2 className="text-sm font-semibold">Output</h2>
-            <div className="flex-1 overflow-hidden rounded-lg border bg-card p-4">
+            <div className="flex-1 overflow-hidden rounded-lg border bg-card p-4 min-h-[350px]">
               <OutputPanel
                 output={output}
                 error={error}

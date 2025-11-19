@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { CheckCircle2, XCircle, Loader2 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { CheckCircle2, XCircle, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface OutputPanelProps {
   output: string;
@@ -12,13 +12,20 @@ interface OutputPanelProps {
   executionTime?: number;
 }
 
-export function OutputPanel({ output, error, isRunning, executionTime }: OutputPanelProps) {
+export function OutputPanel({
+  output,
+  error,
+  isRunning,
+  executionTime,
+}: OutputPanelProps) {
   if (isRunning) {
     return (
       <div className="flex h-full items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <p className="text-sm text-muted-foreground">Compiling and running code...</p>
+          <p className="text-sm text-muted-foreground">
+            Compiling and running code...
+          </p>
         </div>
       </div>
     );
@@ -27,7 +34,9 @@ export function OutputPanel({ output, error, isRunning, executionTime }: OutputP
   if (!output && !error) {
     return (
       <div className="flex h-full items-center justify-center">
-        <p className="text-sm text-muted-foreground">Run your code to see output</p>
+        <p className="text-sm text-muted-foreground">
+          Run your code to see output
+        </p>
       </div>
     );
   }
@@ -57,8 +66,9 @@ export function OutputPanel({ output, error, isRunning, executionTime }: OutputP
               </span>
             )}
           </div>
+
           <ScrollArea className="h-[calc(100%-2rem)] rounded-lg border bg-card">
-            <pre className="p-4 font-mono text-sm">{output}</pre>
+            <pre className="p-4 pr-6 font-mono text-sm">{output}</pre>
           </ScrollArea>
         </div>
       )}

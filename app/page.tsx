@@ -1,0 +1,276 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
+import { Header } from "@/components/header";
+import { CodeEditor } from "@/components/code-editor";
+import { OutputPanel } from "@/components/output-panel";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Play, Share2, RotateCcw, Copy, Check } from "lucide-react";
+import { codeTemplates, languageNames } from "@/lib/code-templates";
+import { getSupabase } from "@/lib/supabase";
+import { useToast } from "@/hooks/use-toast";
+
+type Language = "c" | "cpp" | "java" | "python";
+
+export default function Home() {
+  const searchParams = useSearchParams();
+  const { toast } = useToast();
+
+  const [language, setLanguage] = useState<Language>("python");
+  const [code, setCode] = useState(codeTemplates.python);
+  const [output, setOutput] = useState("");
+  const [error, setError] = useState("");
+  const [isRunning, setIsRunning] = useState(false);
+  const [executionTime, setExecutionTime] = useState<number>();
+  const [isCopied, setIsCopied] = useState(false);
+
+  useEffect(() => {
+    const shareId = searchParams.get("share");
+    if (shareId) {
+      loadSharedCode(shareId);
+    }
+  }, [searchParams]);
+
+  const loadSharedCode = async (shareId: string) => {
+    try {
+      const supabase = getSupabase();
+      if (!supabase) {
+        throw new Error("Supabase not configured");
+      }
+
+      const { data, error } = await supabase
+        .from("code_snippets")
+        .select("*")
+        .eq("share_id", shareId)
+        .maybeSingle();
+
+      if (error) throw error;
+
+      if (data) {
+        setLanguage(data.language as Language);
+        setCode(data.code);
+        toast({
+          title: "Code loaded successfully",
+          description: `Loaded shared ${
+            languageNames[data.language as Language]
+          } code`,
+        });
+      }
+    } catch (err) {
+      console.error("Error loading shared code:", err);
+      toast({
+        title: "Error",
+        description: "Failed to load shared code",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleLanguageChange = (newLanguage: Language) => {
+    setLanguage(newLanguage);
+    setCode(codeTemplates[newLanguage]);
+    setOutput("");
+    setError("");
+    setExecutionTime(undefined);
+  };
+
+  const handleReset = () => {
+    setCode(codeTemplates[language]);
+    setOutput("");
+    setError("");
+    setExecutionTime(undefined);
+  };
+
+  const handleRunCode = async () => {
+    setIsRunning(true);
+    setOutput("");
+    setError("");
+    setExecutionTime(undefined);
+
+    try {
+      const response = await fetch("/api/execute", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          language,
+          code,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setOutput(result.output || "Program executed successfully (no output)");
+        setExecutionTime(result.executionTime);
+      } else {
+        setError(result.error || "An unknown error occurred");
+      }
+    } catch (err) {
+      setError(
+        "Failed to execute code. Please check your connection and try again."
+      );
+    } finally {
+      setIsRunning(false);
+    }
+  };
+
+  const handleShareCode = async () => {
+    try {
+      const supabase = getSupabase();
+      if (!supabase) {
+        throw new Error("Supabase not configured");
+      }
+
+      const shareId = Math.random().toString(36).substring(2, 10);
+
+      const { error } = await supabase.from("code_snippets").insert({
+        share_id: shareId,
+        language,
+        code,
+      });
+
+      if (error) throw error;
+
+      const shareUrl = `${window.location.origin}?share=${shareId}`;
+      await navigator.clipboard.writeText(shareUrl);
+
+      toast({
+        title: "Share link copied!",
+        description: "Share URL has been copied to your clipboard",
+      });
+    } catch (err) {
+      console.error("Error sharing code:", err);
+      toast({
+        title: "Error",
+        description: "Failed to generate share link",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleCopyCode = async () => {
+    try {
+      await navigator.clipboard.writeText(code);
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
+      toast({
+        title: "Code copied!",
+        description: "Code has been copied to your clipboard",
+      });
+    } catch (err) {
+      toast({
+        title: "Error",
+        description: "Failed to copy code",
+        variant: "destructive",
+      });
+    }
+  };
+
+  return (
+    <div className="flex h-screen flex-col">
+      <Header />
+
+      <main className="flex flex-1 flex-col overflow-hidden">
+        <div className="border-b bg-muted/30 px-4 py-3">
+          <div className="container flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center gap-3">
+              <Select
+                value={language}
+                onValueChange={(value) =>
+                  handleLanguageChange(value as Language)
+                }
+              >
+                <SelectTrigger className="w-[140px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="python">Python</SelectItem>
+                  <SelectItem value="c">C</SelectItem>
+                  <SelectItem value="cpp">C++</SelectItem>
+                  <SelectItem value="java">Java</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Button
+                onClick={handleRunCode}
+                disabled={isRunning}
+                className="gap-2"
+              >
+                <Play className="h-4 w-4" />
+                {isRunning ? "Running..." : "Run Code"}
+              </Button>
+
+              <Button variant="outline" onClick={handleReset} className="gap-2">
+                <RotateCcw className="h-4 w-4" />
+                Reset
+              </Button>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              <Button
+                variant="outline"
+                onClick={handleCopyCode}
+                className="gap-2"
+              >
+                {isCopied ? (
+                  <>
+                    <Check className="h-4 w-4" />
+                    Copied
+                  </>
+                ) : (
+                  <>
+                    <Copy className="h-4 w-4" />
+                    Copy Code
+                  </>
+                )}
+              </Button>
+
+              <Button
+                variant="outline"
+                onClick={handleShareCode}
+                className="gap-2"
+              >
+                <Share2 className="h-4 w-4" />
+                Share
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        <div className="container flex flex-1 flex-col gap-4 overflow-hidden py-4 lg:flex-row">
+          <div className="flex flex-1 flex-col gap-2">
+            <h2 className="text-sm font-semibold">Code Editor</h2>
+            <CodeEditor
+              value={code}
+              onChange={setCode}
+              language={language}
+              className="flex-1"
+            />
+          </div>
+
+          <div className="flex flex-1 flex-col gap-2">
+            <h2 className="text-sm font-semibold">Output</h2>
+            <div className="flex-1 overflow-hidden rounded-lg border bg-card p-4">
+              <OutputPanel
+                output={output}
+                error={error}
+                isRunning={isRunning}
+                executionTime={executionTime}
+              />
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}

@@ -250,7 +250,7 @@ export default function Home() {
         <div className="flex flex-1 flex-col gap-4 overflow-hidden py-4 px-6 lg:flex-row justify-center">
           {/* LEFT SIDE EDITOR */}
           <div className="flex flex-col gap-2 w-full lg:w-[45%]">
-            <h2 className="text-sm font-semibold">Code Editor</h2>
+            <h2 className="text-sm font-bold font-sans">Code Editor</h2>
             <CodeEditor
               value={code}
               onChange={setCode}
@@ -261,7 +261,7 @@ export default function Home() {
 
           {/* RIGHT SIDE OUTPUT */}
           <div className="flex flex-col gap-2 w-full lg:w-[45%]">
-            <h2 className="text-sm font-semibold">Output</h2>
+            <h2 className="text-sm font-bold font-sans">Output</h2>
             <div className="flex-1 overflow-hidden rounded-lg border bg-card p-4 min-h-[350px]">
               <OutputPanel
                 output={output}

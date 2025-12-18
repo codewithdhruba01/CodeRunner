@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Header } from "@/components/header";
 import { CodeEditor } from "@/components/code-editor";
@@ -20,7 +20,7 @@ import { useToast } from "@/hooks/use-toast";
 
 type Language = "c" | "cpp" | "java" | "python";
 
-export default function Home() {
+function HomeContent() {
   const searchParams = useSearchParams();
   const { toast } = useToast();
 
@@ -60,9 +60,8 @@ export default function Home() {
         setCode(data.code);
         toast({
           title: "Code loaded successfully",
-          description: `Loaded shared ${
-            languageNames[data.language as Language]
-          } code`,
+          description: `Loaded shared ${languageNames[data.language as Language]
+            } code`,
         });
       }
     } catch (err) {
@@ -301,5 +300,13 @@ export default function Home() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
+      <HomeContent />
+    </Suspense>
   );
 }

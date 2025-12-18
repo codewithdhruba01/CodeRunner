@@ -30,6 +30,7 @@ export default function Home() {
   const [error, setError] = useState("");
   const [isRunning, setIsRunning] = useState(false);
   const [executionTime, setExecutionTime] = useState<number>();
+  const [streamingOutput, setStreamingOutput] = useState("");
   const [isCopied, setIsCopied] = useState(false);
 
   useEffect(() => {
@@ -80,6 +81,7 @@ export default function Home() {
     setOutput("");
     setError("");
     setExecutionTime(undefined);
+    setStreamingOutput("");
   };
 
   const handleReset = () => {
@@ -87,6 +89,7 @@ export default function Home() {
     setOutput("");
     setError("");
     setExecutionTime(undefined);
+    setStreamingOutput("");
   };
 
   const handleRunCode = async () => {
@@ -94,6 +97,7 @@ export default function Home() {
     setOutput("");
     setError("");
     setExecutionTime(undefined);
+    setStreamingOutput("");
 
     try {
       const response = await fetch("/api/execute", {
@@ -110,7 +114,30 @@ export default function Home() {
       const result = await response.json();
 
       if (result.success) {
-        setOutput(result.output || "Program executed successfully (no output)");
+        // Display output line by line with smooth streaming effect
+        const fullOutput = result.output || "Program executed successfully (no output)";
+        setStreamingOutput(fullOutput);
+
+        // Display output line by line to simulate real-time streaming
+        let currentOutput = "";
+        const outputLines = fullOutput.split('\n');
+
+        for (let i = 0; i < outputLines.length; i++) {
+          const line = outputLines[i];
+          // Add the complete line at once instead of character by character
+          currentOutput += line;
+          if (i < outputLines.length - 1) {
+            currentOutput += '\n';
+          }
+
+          setOutput(currentOutput);
+
+          // Add a small delay between lines to simulate streaming
+          if (i < outputLines.length - 1) {
+            await new Promise(resolve => setTimeout(resolve, 100)); // 100ms delay between lines
+          }
+        }
+
         setExecutionTime(result.executionTime);
       } else {
         setError(result.error || "An unknown error occurred");

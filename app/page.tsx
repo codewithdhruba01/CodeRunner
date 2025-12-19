@@ -44,7 +44,12 @@ function HomeContent() {
     try {
       const supabase = getSupabase();
       if (!supabase) {
-        throw new Error("Supabase not configured");
+        toast({
+          title: "Supabase Not Configured",
+          description: "Cannot load shared code. Supabase environment variables are not set up.",
+          variant: "destructive",
+        });
+        return;
       }
 
       const { data, error } = await supabase
@@ -62,6 +67,12 @@ function HomeContent() {
           title: "Code loaded successfully",
           description: `Loaded shared ${languageNames[data.language as Language]
             } code`,
+        });
+      } else {
+        toast({
+          title: "Code Not Found",
+          description: "The shared code link is invalid or has expired.",
+          variant: "destructive",
         });
       }
     } catch (err) {
@@ -154,7 +165,12 @@ function HomeContent() {
     try {
       const supabase = getSupabase();
       if (!supabase) {
-        throw new Error("Supabase not configured");
+        toast({
+          title: "Supabase Not Configured",
+          description: "Please set up Supabase environment variables to enable code sharing. Check .env.local file.",
+          variant: "destructive",
+        });
+        return;
       }
 
       const shareId = Math.random().toString(36).substring(2, 10);

@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Play, Share2, RotateCcw, Copy, Check } from "lucide-react";
+import { Play, Share2, RotateCcw, Copy, Check, Download } from "lucide-react";
 import { codeTemplates, languageNames } from "@/lib/code-templates";
 import { getSupabase } from "@/lib/supabase";
 import { useToast } from "@/hooks/use-toast";
@@ -218,6 +218,42 @@ function HomeContent() {
     }
   };
 
+  const handleDownloadCode = () => {
+    const fileName = prompt('Enter filename (without extension):', `code_${language}`);
+    if (!fileName || !fileName.trim()) {
+      toast({
+        title: "Cancelled",
+        description: "Download cancelled",
+      });
+      return;
+    }
+
+    const extensions = {
+      python: '.py',
+      c: '.c',
+      cpp: '.cpp',
+      java: '.java'
+    };
+
+    const extension = extensions[language];
+    const fullFileName = `${fileName.trim()}${extension}`;
+
+    const blob = new Blob([code], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fullFileName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    toast({
+      title: "Download started!",
+      description: `${fullFileName} is being downloaded`,
+    });
+  };
+
   return (
     <div className="flex h-screen flex-col">
       <Header />
@@ -284,6 +320,15 @@ function HomeContent() {
               >
                 <Share2 className="h-4 w-4" />
                 Share
+              </Button>
+
+              <Button
+                variant="outline"
+                onClick={handleDownloadCode}
+                className="gap-2"
+              >
+                <Download className="h-4 w-4" />
+                Download
               </Button>
             </div>
           </div>

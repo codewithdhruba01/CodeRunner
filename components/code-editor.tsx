@@ -2,6 +2,10 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Trash2, FileText, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface CodeEditorProps {

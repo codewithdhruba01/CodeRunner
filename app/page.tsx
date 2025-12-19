@@ -259,16 +259,16 @@ function HomeContent() {
       <Header />
 
       <main className="flex flex-1 flex-col overflow-hidden">
-        <div className="border-b bg-muted/30 px-4 py-3">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="flex flex-wrap items-center gap-3">
+        <div className="border-b bg-muted/30 px-3 sm:px-4 py-3">
+          <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
               <Select
                 value={language}
                 onValueChange={(value) =>
                   handleLanguageChange(value as Language)
                 }
               >
-                <SelectTrigger className="w-[140px]">
+                <SelectTrigger className="w-[120px] sm:w-[140px] text-xs sm:text-sm">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -282,33 +282,39 @@ function HomeContent() {
               <Button
                 onClick={handleRunCode}
                 disabled={isRunning}
-                className="gap-2"
+                className="gap-1 sm:gap-2 text-xs sm:text-sm"
+                size="sm"
               >
-                <Play className="h-4 w-4" />
-                {isRunning ? "Running..." : "Run Code"}
+                <Play className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">{isRunning ? "Running..." : "Run Code"}</span>
+                <span className="sm:hidden">Run</span>
               </Button>
 
-              <Button variant="outline" onClick={handleReset} className="gap-2">
-                <RotateCcw className="h-4 w-4" />
-                Reset
+              <Button variant="outline" onClick={handleReset} className="gap-1 sm:gap-2 text-xs sm:text-sm" size="sm">
+                <RotateCcw className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">Reset</span>
+                <span className="sm:hidden">Reset</span>
               </Button>
             </div>
 
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 justify-start sm:justify-end">
               <Button
                 variant="outline"
                 onClick={handleCopyCode}
-                className="gap-2"
+                className="gap-1 sm:gap-2 text-xs sm:text-sm"
+                size="sm"
               >
                 {isCopied ? (
                   <>
-                    <Check className="h-4 w-4" />
-                    Copied
+                    <Check className="h-3 w-3 sm:h-4 sm:w-4" />
+                    <span className="hidden sm:inline">Copied</span>
+                    <span className="sm:hidden">✓</span>
                   </>
                 ) : (
                   <>
-                    <Copy className="h-4 w-4" />
-                    Copy Code
+                    <Copy className="h-3 w-3 sm:h-4 sm:w-4" />
+                    <span className="hidden sm:inline">Copy Code</span>
+                    <span className="sm:hidden">Copy</span>
                   </>
                 )}
               </Button>
@@ -316,40 +322,44 @@ function HomeContent() {
               <Button
                 variant="outline"
                 onClick={handleShareCode}
-                className="gap-2"
+                className="gap-1 sm:gap-2 text-xs sm:text-sm"
+                size="sm"
               >
-                <Share2 className="h-4 w-4" />
-                Share
+                <Share2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">Share</span>
+                <span className="sm:hidden">Share</span>
               </Button>
 
               <Button
                 variant="outline"
                 onClick={handleDownloadCode}
-                className="gap-2"
+                className="gap-1 sm:gap-2 text-xs sm:text-sm"
+                size="sm"
               >
-                <Download className="h-4 w-4" />
-                Download
+                <Download className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">Download</span>
+                <span className="sm:hidden">Download</span>
               </Button>
             </div>
           </div>
         </div>
 
-        <div className="flex flex-1 flex-col gap-4 overflow-hidden py-4 px-6 lg:flex-row justify-center">
+        <div className="flex flex-1 flex-col gap-3 sm:gap-4 overflow-hidden py-3 sm:py-4 px-3 sm:px-6 lg:flex-row justify-center">
           {/* LEFT SIDE EDITOR */}
           <div className="flex flex-col gap-2 w-full lg:w-[45%]">
-            <h2 className="text-sm font-bold font-sans">Code Editor</h2>
+            <h2 className="text-xs sm:text-sm font-bold font-sans">Code Editor</h2>
             <CodeEditor
               value={code}
               onChange={setCode}
               language={language}
-              className="flex-1 min-h-[350px]"
+              className="flex-1 min-h-[250px] sm:min-h-[350px]"
             />
           </div>
 
           {/* RIGHT SIDE OUTPUT */}
           <div className="flex flex-col gap-2 w-full lg:w-[45%]">
-            <h2 className="text-sm font-bold font-sans">Output</h2>
-            <div className="flex-1 overflow-hidden rounded-lg border bg-card p-4 min-h-[350px]">
+            <h2 className="text-xs sm:text-sm font-bold font-sans">Output</h2>
+            <div className="flex-1 overflow-hidden rounded-lg border bg-card p-3 sm:p-4 min-h-[250px] sm:min-h-[350px]">
               <OutputPanel
                 output={output}
                 error={error}

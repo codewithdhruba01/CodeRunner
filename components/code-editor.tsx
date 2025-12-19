@@ -154,7 +154,7 @@ export function CodeEditor({
       )}
     >
       {/* Line Numbers */}
-      <div className="flex-shrink-0 select-none border-r bg-muted/30 px-3 py-4 text-right font-mono text-sm text-muted-foreground">
+      <div className="flex-shrink-0 select-none border-r bg-muted/30 px-2 sm:px-3 py-4 text-right font-mono text-xs sm:text-sm text-muted-foreground">
         {lineNumbers.map((num) => (
           <div key={num} className="leading-6">
             {num}
@@ -169,7 +169,7 @@ export function CodeEditor({
           ref={textareaRef}
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="absolute inset-0 h-full resize-none rounded-none border-0 bg-transparent font-mono text-sm leading-6 focus-visible:ring-0 focus-visible:ring-offset-0 text-transparent caret-black dark:caret-white z-10"
+          className="absolute inset-0 h-full resize-none rounded-none border-0 bg-transparent font-mono text-xs sm:text-sm leading-6 focus-visible:ring-0 focus-visible:ring-offset-0 text-transparent caret-black dark:caret-white z-10"
           placeholder={`Write your ${language.toUpperCase()} code here...`}
           spellCheck={false}
           style={{
@@ -184,7 +184,7 @@ export function CodeEditor({
         {/* Syntax Highlighted Display */}
         <div
           ref={highlighterRef}
-          className="absolute inset-0 h-full overflow-auto rounded-none border-0 bg-transparent font-mono text-sm leading-6 pointer-events-none whitespace-pre-wrap break-words"
+          className="absolute inset-0 h-full overflow-auto rounded-none border-0 bg-transparent font-mono text-xs sm:text-sm leading-6 pointer-events-none whitespace-pre-wrap break-words"
           style={{
             padding: '1rem',
             lineHeight: '1.5rem',
